@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Aangepaste versie van broncode http://jenkins-php.org/automation.html -->
+<project name="name-of-project" default="basic-build">
+
+    <target name="basic-build"
+            depends="prepare,lint"
+            description="Perform basic build"/>
+
+    <target name="clean"
+            unless="clean.done"
+            description="Cleanup build artifacts">
+        <delete dir="${basedir}/logs"/>
+        <property name="clean.done" value="true"/>
+    </target>
+
+    <target name="prepare"
+            unless="prepare.done"
+            depends="clean"
+            description="Prepare for build">
+        <mkdir dir="${basedir}/logs"/>
+        <property name="prepare.done" value="true"/>
+    </target>
+
+    <target name="lint"
+            unless="lint.done"
+            description="Perform syntax check of sourcecode files">
+        <apply executable="php" taskname="lint" failonerror="true">
+            <arg value="-l"/>
+            <fileset dir="${basedir}/source">
+                <include name="**/*.php"/>
+                <exclude name="**/vendor/**"/>
+                <exclude name="**/ripcord-master/**"/>
+            </fileset>
+            <fileset dir="${basedir}/Test">
+                <include name="**/*.php"/>
+            </fileset>
+        </apply>
+        <property name="lint.done" value="true"/>
+    </target>
+</project>
